@@ -41,6 +41,15 @@ Run the same commands locally from the repo root. All six exit 0 with no Hermes 
 
 `bin/claim-gate-hook.test.sh`, `bin/dispatch-gate-selftest.py`, and `bin/writer-gate-selftest.py` each import one of the gate plugins from `HERMES_PLUGINS_DIR` (default: `~/.hermes/plugins`, the local Hermes install). CI points the variable at the in-repo `plugins/` tree, so the checks exercise the published plugin code.
 
+### Gate-catch example
+
+`examples/run_example.sh` runs two offline demos and shows the gates refusing bad input:
+
+- `examples/demo_gates.py malformed-dispatch` sends a placeholder `delegate_task` dispatch to the dispatch-envelope gate. The gate returns a block directive, and the case prints `CAUGHT`.
+- `examples/demo_gates.py config-drift` builds a throwaway Hermes home (`config.yaml`, `SOUL.md`, `memories/`), confirms the claim gate is silent on it, then appends a model id that `config.yaml` does not carry to `SOUL.md`. The claim gate exits 1 with a `violation` line, and the case prints `CAUGHT`.
+
+The script exits 0 only when both defects are caught. Its stdout is committed as `examples/malformed-dispatch.log` and `examples/config-drift.log`. A fresh run reproduces both logs byte for byte.
+
 ## Verified results (clean checkout, this commit)
 
 | Command | Exit | Result |

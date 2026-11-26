@@ -1,0 +1,8 @@
+case: config drift (prompt file names a model absent from config.yaml)
+gate: bin/hermes-claim-gate.py --home <throwaway home>
+control (config and prompts agree): exit 0, stdout 0 bytes
+drift: appended to SOUL.md: 'Old notes: the reviewer used openai/gpt-4o before.'
+gate stdout:
+  SOUL.md:8: violation: model id 'openai/gpt-4o' is not in config.yaml; SOUL names model ids only inside the ROUTES block
+gate exit: 1
+verdict: CAUGHT
