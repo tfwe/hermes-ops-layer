@@ -1,0 +1,22 @@
+# Secrets and personal data never belong in this repo.
+auth.json
+auth.lock
+google_client_secret.json
+google_token.json
+MEMORY.md
+USER.md
+SOUL.md
+facts.yaml
+
+# Runtime and build artifacts
+*.db
+*.db-wal
+*.db-shm
+*.lock
+*.log
+*.pyc
+__pycache__/
+.venv/
+venv/
+node_modules/
+.env

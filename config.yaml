@@ -1,0 +1,17 @@
+# Minimal sanitized example of a root configuration. Placeholders only.
+# Route names, model ids and prices live here and nowhere else.
+_config_version: 53
+delegation:
+  provider: example-provider
+  model: example/default-model
+  backends:
+    model_map:
+      options:
+        - name: coder
+          provider: example-provider
+          model: example/coder-model
+          description: Patch-sized code.
+        - name: writer
+          provider: example-provider
+          model: example/writer-model
+          description: Prose drafting.

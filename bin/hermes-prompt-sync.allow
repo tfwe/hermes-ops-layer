@@ -1,0 +1,18 @@
+# Slash tokens in prose that are not model ids (checked by hermes-prompt-sync.py --check).
+# One token per line. Add here only after confirming the token is not a model id.
+firewall/network
+device/ops
+gpt/claude
+cron/timer
+systemd/autostart
+<GH_USER>/<PRIVATE_REPO>
+apps/services
+context/token
+criticisms/improvements
+health/therapy
+said/did
+origin/main
+cache_read/cache_write
+app/phone
+6.79/mo
+26.99/mo

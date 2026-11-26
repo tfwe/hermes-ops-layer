@@ -1,0 +1,208 @@
+#!/usr/bin/python3
+"""Create and list TTL-bounded temporary systemd user units."""
+import argparse
+from datetime import datetime, timedelta
+import os
+import re
+import subprocess
+import sys
+import time
+
+TTL_RE = re.compile(r"^([0-9]+)([smhd])$")
+UNIT_RE = re.compile(r"^([0-9]+(?:\.[0-9]+)?)(us|ms|s|min|h|d|w|M|y)$")
+MULTIPLIERS = {"s": 1, "m": 60, "h": 3600, "d": 86400}
+MIN_TTL_SEC = 60
+MAX_TTL_SEC = 86400
+
+
+def parse_ttl(spec: str) -> int:
+    m = TTL_RE.match(spec or "")
+    if not m:
+        raise ValueError(f"invalid --ttl {spec!r}: must match ^[0-9]+[smhd]$")
+    val, unit = int(m.group(1)), m.group(2)
+    sec = val * MULTIPLIERS[unit]
+    if sec < MIN_TTL_SEC or sec > MAX_TTL_SEC:
+        raise ValueError(f"--ttl {spec!r} ({sec}s) out of range [1m..24h]")
+    return sec
+
+
+def parse_systemd_timespan(spec: str) -> float | None:
+    if not spec or spec in ("infinity", "0"):
+        return None
+    total = 0.0
+    for part in spec.split():
+        m = UNIT_RE.match(part)
+        if not m:
+            return None
+        num, unit = float(m.group(1)), m.group(2)
+        scale = {
+            "us": 1e-6,
+            "ms": 1e-3,
+            "s": 1.0,
+            "min": 60.0,
+            "h": 3600.0,
+            "d": 86400.0,
+            "w": 604800.0,
+            "M": 2629800.0,
+            "y": 31557600.0,
+        }[unit]
+        total += num * scale
+    return total
+
+
+def sanitize_slug(raw: str) -> str:
+    s = re.sub(r"[^a-z0-9-]+", "-", raw.lower()).strip("-")
+    s = s[:24].strip("-")
+    return s or "job"
+
+
+def format_remaining(sec: float) -> str:
+    sec_i = max(0, int(round(sec)))
+    h, rem = divmod(sec_i, 3600)
+    m, s = divmod(rem, 60)
+    if h:
+        return f"{h}h{m:02d}m{s:02d}s"
+    if m:
+        return f"{m}m{s:02d}s"
+    return f"{s}s"
+
+
+def cmd_list() -> int:
+    p = subprocess.run(
+        ["systemctl", "--user", "list-units", "hermes-tmp-*", "--state=active", "--no-legend", "--plain"],
+        capture_output=True,
+        text=True,
+    )
+    if p.returncode != 0:
+        sys.stderr.write(p.stderr or "systemctl list-units failed\n")
+        return 1
+    lines = [ln.strip() for ln in p.stdout.splitlines() if ln.strip()]
+    if not lines:
+        print("no active hermes-tmp-* units")
+        return 0
+    now_mono = time.monotonic()
+    for ln in lines:
+        unit = ln.split()[0]
+        sp = subprocess.run(
+            [
+                "systemctl",
+                "--user",
+                "show",
+                unit,
+                "-p",
+                "RuntimeMaxUSec",
+                "-p",
+                "ActiveEnterTimestampMonotonic",
+                "-p",
+                "Description",
+            ],
+            capture_output=True,
+            text=True,
+        )
+        props = {}
+        for pline in sp.stdout.splitlines():
+            k, _, v = pline.partition("=")
+            props[k] = v
+        rmax = parse_systemd_timespan(props.get("RuntimeMaxUSec", ""))
+        enter_us_s = props.get("ActiveEnterTimestampMonotonic", "0")
+        rem_str = "unknown"
+        if rmax is not None and enter_us_s.isdigit() and int(enter_us_s) > 0:
+            elapsed = now_mono - (int(enter_us_s) / 1e6)
+            rem_str = format_remaining(rmax - elapsed)
+        desc = props.get("Description", "")
+        print(f"{unit}\tremaining={rem_str}\t{desc}")
+    return 0
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(
+        prog="hermes-tmp-unit",
+        description="Run a TTL-bounded temporary systemd --user unit.",
+    )
+    ap.add_argument("--ttl", help="Time to live (^[0-9]+[smhd]$, min 1m, max 24h)")
+    ap.add_argument("--name", help="Optional unit slug (default: basename of CMD)")
+    ap.add_argument("--desc", default="", help="Optional description suffix")
+    ap.add_argument("--list", action="store_true", help="List active hermes-tmp-* units")
+    ap.add_argument("cmd", nargs=argparse.REMAINDER, help="-- CMD [ARGS...]")
+    args = ap.parse_args()
+
+    if args.list:
+        return cmd_list()
+
+    if not args.ttl:
+        sys.stderr.write("error: --ttl is required\n")
+        return 2
+    try:
+        ttl_sec = parse_ttl(args.ttl)
+    except ValueError as e:
+        sys.stderr.write(f"error: {e}\n")
+        return 2
+
+    cmd = list(args.cmd)
+    if cmd and cmd[0] == "--":
+        cmd = cmd[1:]
+    if not cmd:
+        sys.stderr.write("error: CMD is required after --\n")
+        return 2
+
+    slug = sanitize_slug(args.name if args.name else os.path.basename(cmd[0]))
+    epoch = int(time.time())
+    unit_base = f"hermes-tmp-{slug}-{epoch}"
+    unit_name = f"{unit_base}.service"
+    desc_text = f"temporary (TTL {args.ttl})"
+    if args.desc:
+        desc_text = f"{desc_text} {args.desc}"
+
+    run_cmd = [
+        "systemd-run",
+        "--user",
+        f"--unit={unit_base}",
+        "--collect",
+        "-p",
+        f"RuntimeMaxSec={ttl_sec}",
+        "-p",
+        "TimeoutStopSec=10",
+        f"--description={desc_text}",
+        "--",
+        *cmd,
+    ]
+    res = subprocess.run(run_cmd, capture_output=True, text=True)
+    if res.returncode != 0:
+        err = (res.stderr or res.stdout or "systemd-run failed").strip()
+        sys.stderr.write(f"{err}\n")
+        return 1
+
+    show = subprocess.run(
+        [
+            "systemctl",
+            "--user",
+            "show",
+            unit_name,
+            "-p",
+            "RuntimeMaxSec",
+            "-p",
+            "RuntimeMaxUSec",
+            "-p",
+            "ActiveState",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    props = {}
+    for ln in show.stdout.splitlines():
+        k, _, v = ln.partition("=")
+        props[k] = v
+
+    active_state = props.get("ActiveState", "")
+    if active_state != "active":
+        err = (show.stderr or f"{unit_name} ActiveState={active_state or 'unknown'}").strip()
+        sys.stderr.write(f"{err}\n")
+        return 1
+
+    expiry = (datetime.now().astimezone() + timedelta(seconds=ttl_sec)).isoformat(timespec="seconds")
+    print(f"{unit_name} expires={expiry}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

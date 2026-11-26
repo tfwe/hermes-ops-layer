@@ -1,0 +1,11 @@
+name: writer-route-gate
+label: Writer Route Gate
+kind: standalone
+version: 0.1.0
+author: Carlo
+description: >-
+  Deterministic relay check for the writer route. On transform_llm_output, if a
+  turn produced a long reply with no `writer` dispatch, or a reply that rewrote
+  the writer child's text without a change log, the child's own text is appended
+  with one line saying what happened. Classical code over strings, no inference,
+  fail-open. Self-test: ~/bin/writer-gate-selftest.py

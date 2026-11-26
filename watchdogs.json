@@ -1,0 +1,40 @@
+{
+  "_comment": "Sanitized example. Each check must be able to FAIL for a real reason. Validate offline with: WATCHDOG_CONFIG=watchdogs.json python3 scripts/watchdog.py --dry-run",
+  "cadence_hours": 6,
+  "checks": [
+    {
+      "name": "example listener unit",
+      "type": "unit",
+      "unit": "example-listener.service",
+      "why": "systemd restarts it on crash; a non-active unit means restarts are exhausted"
+    },
+    {
+      "name": "example log fresh",
+      "type": "file_fresh",
+      "path": "~/example/listen.log",
+      "max_age_hours": 8,
+      "why": "a silent log means the process looks healthy but is wedged"
+    },
+    {
+      "name": "example scheduler heartbeat",
+      "type": "heartbeat",
+      "path": "~/.hermes/cron/ticker_last_success",
+      "max_age_hours": 0.75,
+      "why": "no tick means no scheduled job runs; this is the dead-man for the scheduler"
+    },
+    {
+      "name": "example local port",
+      "type": "port",
+      "host": "127.0.0.1",
+      "port": 8642,
+      "why": "backend for the local web chat; silent failure means chat is dead"
+    },
+    {
+      "name": "example free disk",
+      "type": "disk",
+      "path": "/",
+      "min_free_gb": 2,
+      "why": "a full disk stops writes everywhere"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  selftests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install PyYAML (required by hermes-prompt-sync.py)
+        run: python3 -m pip install pyyaml
+      - name: Run self-contained selftests and watchdog dry run
+        run: |
+          set -e
+          bin/hermes-claim-gate.test.sh
+          bin/hermes-skill-refs.test.sh
+          WATCHDOG_CONFIG=watchdogs.json python3 scripts/watchdog.py --dry-run
+      - name: Run plugin selftests against the in-repo plugins
+        run: |
+          set -e
+          export HERMES_PLUGINS_DIR="$PWD/plugins"
+          bin/claim-gate-hook.test.sh
+          python3 bin/dispatch-gate-selftest.py
+          python3 bin/writer-gate-selftest.py

@@ -1,0 +1,13 @@
+name: dispatch-envelope-gate
+label: Dispatch Envelope Gate
+kind: standalone
+version: 0.1.0
+author: Carlo
+description: >-
+  Fast, fail-open pre_tool_call validation for delegate_task dispatches. Requires
+  every dispatched task to include an explicit route and a complete, bounded
+  task envelope before any child can spawn. Valid routes are the live
+  delegation.backends.model_map.options names plus a built-in fallback set.
+provides_tools: []
+provides_hooks:
+  - pre_tool_call

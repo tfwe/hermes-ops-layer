@@ -1,0 +1,14 @@
+name: claim-gate-hook
+label: Claim Gate Hook
+kind: standalone
+version: 0.1.0
+author: Carlo
+description: >-
+  Pre-write check for memory and skill_manage writes. Pipes the proposed text to
+  hermes-claim-gate.py --text, which enforces the memory-file HARD rules (route names and
+  model ids, and restated escalation policy). Dry-run by default: it logs would-be blocks to
+  logs/claim-gate.jsonl and allows them. Set CLAIM_GATE_ENFORCE=1 to block. Fail-open on any
+  gate error.
+provides_tools: []
+provides_hooks:
+  - pre_tool_call
