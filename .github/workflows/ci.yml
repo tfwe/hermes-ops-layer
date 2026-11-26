@@ -27,3 +27,7 @@ jobs:
           bin/claim-gate-hook.test.sh
           python3 bin/dispatch-gate-selftest.py
           python3 bin/writer-gate-selftest.py
+      - name: Run gate-catch example (malformed dispatch and config drift)
+        run: |
+          set -e
+          bash examples/run_example.sh
