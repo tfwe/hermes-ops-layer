@@ -1,17 +1,21 @@
-# Minimal sanitized example of a root configuration. Placeholders only.
-# Route names, model ids and prices live here and nowhere else.
+# The route config the gates read. Route names, model ids and prices live
+# here and nowhere else; a model id named anywhere else is config drift.
 _config_version: 53
 delegation:
-  provider: example-provider
-  model: example/default-model
+  provider: openrouter
+  model: deepseek/deepseek-v4.1-flash
   backends:
     model_map:
       options:
         - name: coder
-          provider: example-provider
-          model: example/coder-model
-          description: Patch-sized code.
-        - name: writer
-          provider: example-provider
-          model: example/writer-model
-          description: Prose drafting.
+          provider: openrouter
+          model: anthropic/claude-haiku-5.5
+          description: Patch-sized code. $0.10/$0.50 per M (over 100k context $0.50/$2.50).
+        - name: repo-coder
+          provider: openrouter
+          model: google/gemini-4-hydrogen
+          description: Escalation only. $1.50/$7.50 per M.
+        - name: gemini-app
+          provider: gemini-app
+          model: gemini-app-neon
+          description: Free reasoning shim.

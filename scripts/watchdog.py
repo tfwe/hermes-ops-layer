@@ -303,7 +303,7 @@ def main():
         return dry_run()
 
     if a.test_alert:
-        print(telegram("watchdog test: alert path works. <USER>'s Pi, %s"
+        print(telegram("watchdog test: alert path works. %s"
                        % datetime.now().strftime("%Y-%m-%d %H:%M")))
         return 0
 

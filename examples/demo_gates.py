@@ -21,8 +21,7 @@ REPO = Path(__file__).resolve().parent.parent
 GATE_PY = REPO / "plugins" / "dispatch-envelope-gate" / "gate.py"
 CLAIM_GATE = REPO / "bin" / "hermes-claim-gate.py"
 
-# Same route layout as bin/hermes-claim-gate.test.sh, placeholders only.
-CONFIG = """_config_version: 53
+CONFIG = """_config_version: 53  # same route layout as bin/hermes-claim-gate.test.sh
 delegation:
   provider: openrouter
   model: deepseek/deepseek-v4.1-flash
