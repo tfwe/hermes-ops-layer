@@ -4,7 +4,7 @@ input: tasks[1] = {'goal': 'placeholder'}
 block action: block
 block message:
   Dispatch blocked: repair every listed task, then resend.
-  #1 goal="placeholder" — goal: supply at least 15 non-whitespace characters; goal: replace placeholder text with the real deliverable; option: supply exactly one route: coder, gemini-app, researcher, reviewer, verifier, writer, writer-internal; brief.TASK: add a line beginning 'TASK:' with its value; brief.FACTS: add a line beginning 'FACTS:' with its value; brief.PATHS: add a line beginning 'PATHS:' with its value; brief.OUTPUT: add a line beginning 'OUTPUT:' with its value; brief.CHECK: add a line beginning 'CHECK:' with its value; brief.CEILING: add a line beginning 'CEILING:' with its value
+  #1 goal="placeholder" — goal: supply at least 15 non-whitespace characters; goal: replace placeholder text with the real deliverable; option: supply exactly one route: coder, gemini-app, repo-coder, researcher, reviewer, verifier, writer; brief.TASK: add a line beginning 'TASK:' with its value; brief.FACTS: add a line beginning 'FACTS:' with its value; brief.PATHS: add a line beginning 'PATHS:' with its value; brief.OUTPUT: add a line beginning 'OUTPUT:' with its value; brief.CHECK: add a line beginning 'CHECK:' with its value; brief.CEILING: add a line beginning 'CEILING:' with its value
   
   Copy this six-line envelope into each task's goal (or its context) and fill it in:
   goal is emitted on every call and is the field that always arrives; context is optional and some models omit it.

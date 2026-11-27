@@ -74,11 +74,20 @@ def load_gate():
 def malformed_dispatch() -> int:
     print("case: malformed dispatch (delegate_task)")
     print("gate: plugins/dispatch-envelope-gate/gate.py validate_dispatch")
-    gate = load_gate()
-    # A placeholder goal with no option and no brief: the gate must refuse it.
-    args = {"tasks": [{"goal": "placeholder"}]}
-    print("input: tasks[1] = {'goal': 'placeholder'}")
-    result = gate.validate_dispatch("delegate_task", args)
+    # Point the gate at a throwaway home with the fixture config, so the route
+    # list in the output is machine-independent (never the local ~/.hermes).
+    with tempfile.TemporaryDirectory(prefix="gate-demo-") as tmp:
+        home = Path(tmp)
+        (home / "config.yaml").write_text(CONFIG, encoding="utf-8")
+        os.environ["HERMES_HOME"] = str(home)
+        try:
+            gate = load_gate()
+            # A placeholder goal with no option and no brief: the gate must refuse it.
+            args = {"tasks": [{"goal": "placeholder"}]}
+            print("input: tasks[1] = {'goal': 'placeholder'}")
+            result = gate.validate_dispatch("delegate_task", args)
+        finally:
+            os.environ.pop("HERMES_HOME", None)
     caught = isinstance(result, dict) and result.get("action") == "block" and bool(result.get("message"))
     if caught:
         print(f"block action: {result['action']}")

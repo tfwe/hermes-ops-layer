@@ -1,0 +1,38 @@
+CAUGHT  unexpanded '<UTC-ts>' in a dispatch goal
+    MARKER goal: <UTC-ts> … Report on the <UTC-ts> deploy window and list the failing services 
+    
+    1 unexpanded marker(s). Substitute real values (a timestamp from `date -u +%Y%m%dT%H%MZ`), describe a format in words, or move a literal template placeholder into `context` — only `goal` is scanned.
+CAUGHT  expanded timestamp goal
+    (silent, exit 0)
+CAUGHT  real refusal line from 2026-11-21 errors.log
+    1 new delegate_task refusal(s) or failure(s) in Hermes logs; latest 2026-11-21 16:51:54: Task 0 goal contains an unexpanded template marker ('<UTC-ts>'). Substitute the real value before calling delegate_task — subagents canno...
+CAUGHT  check_delegate_failures --self-test
+    self-test: 10 assertions passed
+CAUGHT  stale data under fresh mtime
+    chk_jsonl_fresh -> ok=False: newest row in events.jsonl is 3.0h old (limit 1h)
+CAUGHT  row written a minute ago
+    chk_jsonl_fresh -> ok=True: newest row in events.jsonl is 60s old (limit 1h)
+CAUGHT  absent dead-man file
+    chk_heartbeat -> ok=False: heartbeat /home/carlo/.hermes/cache/scratch/tmpiytm72kj/ticker_last_success missing — writer never ran
+CAUGHT  deployed without +x
+    /home/carlo/.hermes/cache/scratch/tmpqj66qu0x/.hermes/skills/backup/SKILL.md:1: ~/bin/backup.sh -> /home/carlo/.hermes/cache/scratch/tmpqj66qu0x/bin/backup.sh: NOT_EXECUTABLE
+    1 problem(s)
+CAUGHT  with +x set
+    (silent, exit 0)
+CAUGHT  AI-flavored draft reply
+    WARN  L1     paragraph runs 6 lines (convention: <= 4)
+    WARN  L1     3 em dashes in prose (convention: <= 2)
+    WARN  L1     3+ em dashes in one paragraph
+    WARN  L1     banned phrase: 'delve'
+    WARN  L1     banned phrase: "it's worth noting"
+    WARN  L1     banned phrase: 'worth noting'
+    WARN  L1     banned phrase: 'when it comes to'
+    WARN  L1     banned phrase: 'landscape'
+    WARN  L1     banned phrase: 'robust'
+    WARN  L1     banned phrase: 'leverage'
+    
+    0 flag(s), 10 warning(s)  --  59 words
+CAUGHT  factual short reply
+    clean (24 words)
+
+all real-world cases caught
