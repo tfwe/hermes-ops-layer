@@ -150,7 +150,8 @@ def _heartbeat_missing():
         ok, detail = wd.chk_heartbeat({"path": os.path.join(tmp, "ticker_last_success"),
                                        "max_age_hours": 1})
         good = (ok is False) and ("missing" in detail)
-        return "absent dead-man file", good, [f"chk_heartbeat -> ok={ok}: {detail}"]
+        # Scrub the throwaway path so the printed line is reproducible.
+        return "absent dead-man file", good, [detail.replace(tmp, "<tmp>")]
 
 
 # --- 4. skill body names a script that exists but cannot run -----------------
@@ -171,7 +172,9 @@ def _refs_notexec():
                            capture_output=True, text=True)
         out = (p.stdout + p.stderr).strip()
         ok = p.returncode == 1 and "NOT_EXECUTABLE" in out
-        return "deployed without +x", ok, out.splitlines()
+        # Scrub the throwaway path so the printed lines are reproducible.
+        scrubbed = [line.replace(str(home) + os.sep, "<tmp>/") for line in out.splitlines()]
+        return "deployed without +x", ok, scrubbed
 
 
 @case("executable script passes (control)")

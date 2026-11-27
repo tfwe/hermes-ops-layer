@@ -13,9 +13,9 @@ CAUGHT  stale data under fresh mtime
 CAUGHT  row written a minute ago
     chk_jsonl_fresh -> ok=True: newest row in events.jsonl is 60s old (limit 1h)
 CAUGHT  absent dead-man file
-    chk_heartbeat -> ok=False: heartbeat /home/carlo/.hermes/cache/scratch/tmpiytm72kj/ticker_last_success missing — writer never ran
+    heartbeat <tmp>/ticker_last_success missing — writer never ran
 CAUGHT  deployed without +x
-    /home/carlo/.hermes/cache/scratch/tmpqj66qu0x/.hermes/skills/backup/SKILL.md:1: ~/bin/backup.sh -> /home/carlo/.hermes/cache/scratch/tmpqj66qu0x/bin/backup.sh: NOT_EXECUTABLE
+    <tmp>/.hermes/skills/backup/SKILL.md:1: ~/bin/backup.sh -> <tmp>/bin/backup.sh: NOT_EXECUTABLE
     1 problem(s)
 CAUGHT  with +x set
     (silent, exit 0)
