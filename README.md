@@ -116,12 +116,14 @@ Each incident case also runs with a healthy control (expanded goal, fresh row, e
 | Command | Exit | Result |
 |---|---|---|
 | `bin/hermes-claim-gate.test.sh` | 0 | 14 of 14 cases pass |
-| `bin/hermes-skill-refs.test.sh` | 0 | all cases pass |
+| `bin/hermes-skill-refs.test.sh` | 0 | 9 of 9 cases pass |
 | `WATCHDOG_CONFIG=watchdogs.json python3 scripts/watchdog.py --dry-run` | 0 | 7 checks validated, 0 problems |
 | `bin/claim-gate-hook.test.sh` | 0 | 19 of 19 cases pass |
 | `python3 bin/dispatch-gate-selftest.py` | 0 | 15 of 15 checks pass |
 | `python3 bin/writer-gate-selftest.py` | 0 | pass (silent on success, per design) |
 | `bash examples/run_example.sh` | 0 | both demos catch their defect, and all 11 real-world cases are caught (with healthy controls) |
+
+The per-surface counts are pinned to the CI selftest log (run 45924217526, commit 16014ed), committed at `examples/ci-selftest-log.txt`, so evaluators cannot invent them.
 
 The plugin selftests were updated to the current gate semantics: the dispatch selftest's conformant fixture uses the tool `coder` route (a tool-free route with named artifacts and no context directive is refused by design), and the writer selftest pins a known `writer-gate.json` into a throwaway home for the relay-regression case, so the check no longer depends on the author's live policy file.
 

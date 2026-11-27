@@ -1,0 +1,79 @@
+# CI selftest log, trimmed to the per-surface result lines.
+# Source: GitHub Actions run 45924217526 (job: selftests, commit 16014ed).
+# Full untrimmed log: https://github.com/tfwe/hermes-ops-layer/actions/runs/45924217526
+
+PASS clean memory is silent and exits 0
+PASS dirty memory names file and exits 1
+PASS dirty memory line is labelled as violation
+PASS route name in USER.md exits 1
+PASS model id in USER.md exits 1
+PASS unknown model id in SOUL outside block exits 1
+PASS unknown id in SOUL names the id
+PASS unknown id inside ROUTES block is ignored
+PASS prose slash tokens in SOUL are not model ids
+PASS allowlist entry suppresses the line
+PASS skill route reference: --report exits 0 with counts
+PASS skill route reference: default check is silent
+PASS --json parses, exit 1, writes nothing
+PASS missing config.yaml exits 2
+ALL PASS (14 cases)
+PASS good reference is silent (lines=0 exit=0)
+PASS missing references reported (2 lines + count line) (lines=3 exit=1)
+PASS placeholders are skipped (lines=0 exit=0)
+PASS report counts placeholders (exit=0)
+PASS non-executable bin script reported (1 line + count line) (lines=2 exit=1)
+PASS NOT_EXECUTABLE tag present
+PASS allowlist suppresses match (lines=0 exit=0)
+PASS report exits 0 with per-file counts
+PASS missing skills dir is tool error (lines=0 exit=2)
+ALL PASS
+dry-run: 7 check(s) validated, 0 problem(s)
+PASS A clean memory, dry-run: allowed
+PASS A clean memory, dry-run: one allow line logged
+PASS B clean memory, enforcing: allowed
+PASS B clean memory, enforcing: nothing logged
+PASS C escalation memory, enforcing: blocked
+PASS C escalation memory, enforcing: message names the escalation rule
+PASS C escalation memory, enforcing: one block line logged
+PASS D escalation memory, dry-run: allowed
+PASS D escalation memory, dry-run: logged as would_block
+PASS E ENFORCE=0 behaves as dry-run (allowed, logged)
+PASS F unrelated tool: untouched
+PASS G skill_manage patch naming a route, enforcing: untouched
+PASS G2 flag file arms: escalation blocked
+PASS G3 flag file removed: dry-run again
+PASS H gate exits 2, enforcing: fail open (allowed)
+PASS H gate exits 2: error logged
+PASS I gate script missing, enforcing: fail open (allowed)
+PASS I gate script missing: error logged
+PASS J exception inside gate: fail open (allowed)
+19/19 passed
+PASS plugin file exists: plugin.yaml
+PASS plugin file exists: __init__.py
+PASS plugin file exists: gate.py
+PASS plugin file exists: tests/test_gate.py
+PASS plugin file exists: pytest.ini
+PASS gate import
+PASS conformant task passes
+PASS placeholder and missing context are blocked
+PASS proper goal without context is blocked
+PASS mixed batch identifies task #2
+PASS misused primary brief in steer is blocked
+PASS malformed args fail safely
+PASS register attaches pre_tool_call
+PASS registered hook allows valid batch
+PASS unexpected hook error fails open
+dispatch-gate selftest PASSED
+case: malformed dispatch (delegate_task)
+case: config drift (prompt file names a model absent from config.yaml)
+CAUGHT  unexpanded '<UTC-ts>' in a dispatch goal
+CAUGHT  expanded timestamp goal
+CAUGHT  real refusal line from 2026-11-21 errors.log
+CAUGHT  check_delegate_failures --self-test
+CAUGHT  stale data under fresh mtime
+CAUGHT  row written a minute ago
+CAUGHT  absent dead-man file
+CAUGHT  deployed without +x
+CAUGHT  with +x set
+CAUGHT  AI-flavored draft reply
+CAUGHT  factual short reply
